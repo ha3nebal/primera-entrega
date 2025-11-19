@@ -1,106 +1,91 @@
 const pescadosDisponibles = [
-    { nombre: "Salmón", precioPorKg: 15.00 },
-    { nombre: "Albacora", precioPorKg: 12.00 },
-    { nombre: "Merluza Austral", precioPorKg: 18.00 },
-    { nombre: "Congrio", precioPorKg: 10.00 }
+    { id: 1, nombre: "Salmón", precioPorKg: 15000, imagen: "🐟"},
+    { id: 2, nombre: "Albacora", precioPorKg: 12000, imagen: "🦈" },
+    { id: 3, nombre: "Merluza Austral", precioPorKg: 18000, imagen: "🐡" },
+    { id: 4, nombre: "Congrio", precioPorKg: 10000, imagen: "🐋"}
 ];
 
-const carrito = [];
-
-// Variables para el flujo del programa
-let totalFinal = 0;
-let deseaContinuar = true;
-const descuentoUmbral = 50.00; 
-const porcentajeDescuento = 0.20;
+let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
 
-function mostrarMenu() {
-    console.log("--- MENÚ DE PESCADOS ---");
-    for (let i = 0; i < pescadosDisponibles.length; i++) {
-        const pescado = pescadosDisponibles[i];
-        console.log(`${i + 1}. ${pescado.nombre} - ${pescado.precioPorKg.toFixed(2)} / Kg`);
-    }
-    console.log("--------------------------");
+function imprimirProductosEnHTML(pescadosDisponibles) {
+  const contenedorPescados = document.getElementById("pescados-container");
+
+  pescadosDisponibles.forEach((pescados) => {
+    let cardPescado = document.createElement("article");
+    cardPescado.classList = "pescados-item";
+
+    cardPescado.innerHTML = `
+        <h2>Pescado: ${pescados.nombre}</h2>
+        <p>Precio: $${pescados.precioPorKg}</p>
+        <p>Imagen: ${pescados.imagen}</p>
+        <button id="btnComprar${pescados.id}">Comprar</button>
+       
+    `;
+
+    contenedorPescados.appendChild(cardPescado);
+    const botonComprar = document.getElementById(`btnComprar${pescados.id}`);
+
+    // Agregar pescados al carrito
+    botonComprar.addEventListener("click", () => {
+      alert(`Has comprado: ${pescados.nombre} por $${pescados.precioPorKg}`);
+
+      carrito.push({ pescado: pescados.nombre, precio: pescados.precioPorKg });
+      localStorage.setItem("carrito", JSON.stringify(carrito));
+      imprimirCarrito();
+    });
+  });
 }
 
-function comprarPescado() {
-    
-    let opcionStr = prompt("Ingrese el número del pescado que desea comprar (1-4):");
-    let opcion = parseInt(opcionStr);
-
-    if (opcion >= 1 && opcion <= pescadosDisponibles.length) {
-        const indicePescado = opcion - 1;
-        const pescadoSeleccionado = pescadosDisponibles[indicePescado];
-
-        let kilosStr = prompt(`Ingrese la cantidad de kilos de ${pescadoSeleccionado.nombre}:`);
-        let kilos = parseFloat(kilosStr);
-
-        if (kilos > 0) {
-           
-            let subtotal = kilos * pescadoSeleccionado.precioPorKg;
-            
-            carrito.push({
-                nombre: pescadoSeleccionado.nombre,
-                kilos: kilos,
-                subtotal: subtotal
-            });
-
-            console.log(`Agregado: ${kilos.toFixed(2)} Kg de ${pescadoSeleccionado.nombre} por ${subtotal.toFixed(2)}.`);
-        } else {
-            console.log("Cantidad de kilos inválida.");
-        }
-    } else {
-        console.log("Opción de pescado inválida.");
-    }
-}
 
 function finalizarCompra() {
-    let subtotalCompra = 0;
-
-    console.log("\n--- DETALLE DE SU PEDIDO ---");
-
-    for (const item of carrito) {
-        console.log(`- ${item.nombre}: ${item.kilos.toFixed(2)} Kg x ${(item.subtotal / item.kilos).toFixed(2)} = ${item.subtotal.toFixed(2)}`);
-        subtotalCompra += item.subtotal;
+    if (carrito.length === 0) {
+        alert("El carrito está vacío. Agrega productos para finalizar la compra.");
+        return;
     }
+    const total = carrito.reduce((sum, item) => sum + item.precio, 0);
+    alert(`🎉 ¡Compra Finalizada! 🎉 El total de tu compra es: $${total} Gracias por preferirnos.`);
 
-    console.log(`\nSUBTOTAL: ${subtotalCompra.toFixed(2)}`);
-    
-    let descuentoAplicado = 0;
-
-    if (subtotalCompra >= descuentoUmbral) {
-        descuentoAplicado = subtotalCompra * porcentajeDescuento;
-        totalFinal = subtotalCompra - descuentoAplicado;
-        
-        console.log(`¡FELICIDADES! Aplicamos un ${porcentajeDescuento * 100}% de descuento por superar los ${descuentoUmbral.toFixed(2)}.`);
-        console.log(`DESCUENTO: -$${descuentoAplicado.toFixed(2)}`);
-    } else {
-        totalFinal = subtotalCompra;
-        console.log(`Monto restante para descuento (${descuentoUmbral.toFixed(2)}):${(descuentoUmbral - subtotalCompra).toFixed(2)}`);
-    }
-
-    console.log(`===========================`);
-    console.log(`TOTAL A PAGAR: ${totalFinal.toFixed(2)}`);
-    console.log(`===========================`);
-    alert(`El total de su compra es: ${totalFinal.toFixed(2)}. ¡Gracias por su compra!`);
+    carrito = [];
+    localStorage.removeItem("carrito");
+    imprimirCarrito(); 
 }
 
-
-console.log("BIENVENIDO AL SIMULADOR DE VENTA DE PESCADOS ");
-
-while (deseaContinuar) {
-    mostrarMenu();
-    comprarPescado(); 
-    
-    let respuesta = prompt("¿Desea agregar otro pescado? (Sí/No)").toLowerCase();
-    
-    if (respuesta !== "si" && respuesta !== "sí") {
-        deseaContinuar = false;
+function cancelarCompra() {
+    if (carrito.length === 0) {
+        alert("El carrito ya está vacío.");
+        return;
+    }
+    const confirmacion = confirm("¿Estás seguro de que quieres cancelar y vaciar el carrito?");
+    if (confirmacion) {
+        carrito = []; 
+        localStorage.removeItem("carrito");
+        imprimirCarrito();
+        alert("❌ Compra Cancelada. El carrito ha sido vaciado.");
     }
 }
+
+function imprimirCarrito() {
+  const contenedorCarrito = document.getElementById("cart-container");
+  contenedorCarrito.innerHTML = "<h2>Carrito de Compras</h2>";
+  let total = 0;
+
+  carrito.forEach((item, index) => {
+    contenedorCarrito.innerHTML += `<p>${index + 1}. ${item.pescado} - $${item.precio}</p>`;
+    total += item.precio;
+  });
+
+  contenedorCarrito.innerHTML += `<h3>Total: $${total}</h3>`;
+}
+
+// Event Listeners de botones finalizar compra, cancelar compra
+        document.getElementById("btnFinalizarCompra").addEventListener("click", finalizarCompra);
+        document.getElementById("btnCancelarCompra").addEventListener("click", cancelarCompra);
+
+
+// Ejecución del programa
+imprimirProductosEnHTML(pescadosDisponibles);
 
 if (carrito.length > 0) {
-    finalizarCompra();
-} else {
-    console.log("El carrito está vacío. ¡Esperamos verte pronto!")
+  imprimirCarrito();
 };
