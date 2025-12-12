@@ -75,6 +75,7 @@ function cancelarCompra() {
         });
         return;
     }
+    const total = carrito.reduce((sum, item) => sum + item.precio, 0);
 
     Swal.fire({
         title: "¿Estás seguro?",
@@ -133,6 +134,27 @@ function imprimirCarrito() {
 
 // Ejecución del programa
  cargarpescados();
+
+function imprimirCarrito() {
+  const contenedorCarrito = document.getElementById("cart-container");
+  contenedorCarrito.innerHTML = "<h2>Carrito de Compras</h2>";
+  let total = 0;
+
+  carrito.forEach((item, index) => {
+    contenedorCarrito.innerHTML += `<p>${index + 1}. ${item.pescado} - $${item.precio}</p>`;
+    total += item.precio;
+  });
+
+  contenedorCarrito.innerHTML += `<h3>Total: $${total}</h3>`;
+}
+
+// Event Listeners de botones finalizar compra, cancelar compra
+        document.getElementById("btnFinalizarCompra").addEventListener("click", finalizarCompra);
+        document.getElementById("btnCancelarCompra").addEventListener("click", cancelarCompra);
+
+
+// Ejecución del programa
+imprimirProductosEnHTML(pescadosDisponibles);
 
 if (carrito.length > 0) {
   imprimirCarrito();
