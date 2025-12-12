@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "nombre": "Salmón",
+    "precioPorKg": 15000,
+    "imagen": "🐟"
+  },
+  {
+    "id": 2,
+    "nombre": "Albacora",
+    "precioPorKg": 12000,
+    "imagen": "🦈"
+  },
+  {
+    "id": 3,
+    "nombre": "Merluza Austral",
+    "precioPorKg": 18000,
+    "imagen": "🐡"
+  },
+  {
+    "id": 4,
+    "nombre": "Congrio",
+    "precioPorKg": 10000,
+    "imagen": "🐋"
+  },
+  {
+    "id": 5,
+    "nombre": "Bacalao",
+    "precioPorKg": 20000,
+    "imagen": "🐠"
+  },
+  {
+    "id": 6,
+    "nombre": "Reineta",
+    "precioPorKg": 8000,
+    "imagen": "🐬"
+  },
+  {
+    "id": 7,
+    "nombre": "Corvina",
+    "precioPorKg": 14000,
+    "imagen": "🐳"
+  },
+  {
+    "id": 8,
+    "nombre": "Pez Espada",
+    "precioPorKg": 22000,
+    "imagen": "🐙"
+  }
+]
